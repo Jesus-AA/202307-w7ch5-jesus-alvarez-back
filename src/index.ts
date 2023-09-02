@@ -1,4 +1,5 @@
 import createDebug from 'debug';
+import 'dotenv/config';
 import { createServer } from 'http';
 import { app } from './app.js';
 import { dbConnect } from './db/db.connect.js';

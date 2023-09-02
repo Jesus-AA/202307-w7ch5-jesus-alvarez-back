@@ -1,6 +1,7 @@
 import cors from 'cors';
 import express, { NextFunction, Request, Response } from 'express';
 import morgan from 'morgan';
+import { userRouter } from './router/user.router.js';
 
 export const app = express();
 
@@ -17,3 +18,5 @@ app.get('/', (req: Request, res: Response) => {
   res.write('<h1>Bienvenidos a la red social</h1>');
   res.end();
 });
+
+app.use('/users', userRouter);
