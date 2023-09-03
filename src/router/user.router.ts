@@ -21,7 +21,19 @@ userRouter.get(
   authInterceptor.authorization.bind(authInterceptor),
   userController.getAll.bind(userController)
 );
-userRouter.get('/:id', userController.getById.bind(userController));
+userRouter.get(
+  '/:id',
+  authInterceptor.authorization.bind(authInterceptor),
+  userController.getById.bind(userController)
+);
 
-userRouter.patch('/:id', userController.update.bind(userController));
-userRouter.delete('/:id', userController.delete.bind(userController));
+userRouter.patch(
+  '/:id',
+  authInterceptor.authorization.bind(authInterceptor),
+  userController.update.bind(userController)
+);
+userRouter.delete(
+  '/:id',
+  authInterceptor.authorization.bind(authInterceptor),
+  userController.delete.bind(userController)
+);
