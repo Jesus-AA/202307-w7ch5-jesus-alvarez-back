@@ -100,4 +100,84 @@ describe('Given the class UserController', () => {
       expect(mockRepo.delete).toHaveBeenCalled();
     });
   });
+  describe('When there are errors calling methods', () => {
+    const mockRepo: UserMongoRepository = {
+      getAll: jest.fn().mockRejectedValueOnce(new Error('GetAll Error')),
+      getById: jest.fn().mockRejectedValueOnce(new Error('GetById Error')),
+      create: jest.fn().mockRejectedValueOnce(new Error('Create Error')),
+      update: jest.fn().mockRejectedValueOnce(new Error('Update Error')),
+      delete: jest.fn().mockRejectedValueOnce(new Error('Delete Error')),
+    } as unknown as UserMongoRepository;
+    const userController = new UserController(mockRepo);
+    test('Then, when we call getAll(), we should have an error', async () => {
+      const mockRequest = {} as Request;
+      const mockResponse = {
+        json: jest.fn(),
+      } as unknown as Response;
+      const mockNext = jest.fn();
+      await userController.getAll(mockRequest, mockResponse, mockNext);
+      expect(mockRepo.getAll).toBeCalledWith();
+      expect(mockNext).toHaveBeenCalledWith(new Error('GetAll Error'));
+    });
+    test('Then, when we call getById(), we should have an error', async () => {
+      const mockRequest = {
+        params: { id: '01' },
+      } as unknown as Request;
+      const mockResponse = {
+        json: jest.fn(),
+      } as unknown as Response;
+      const mockNext = jest.fn();
+      await userController.getById(mockRequest, mockResponse, mockNext);
+      expect(mockRepo.getById).toHaveBeenCalled();
+      expect(mockNext).toHaveBeenCalledWith(new Error('GetById Error'));
+    });
+    test('Then, when we call create(), we should have an error', async () => {
+      const mockRequest = {
+        body: {
+          userName: 'Kubo',
+          password: '1234',
+          firstName: 'Kubo',
+          lastName: 'San',
+          email: 'kubo@gmail.com',
+          friends: [],
+          enemies: [],
+        },
+      } as Request;
+      const mockResponse = {
+        json: jest.fn(),
+        status: jest.fn(),
+      } as unknown as Response;
+      const mockNext = jest.fn();
+      await userController.create(mockRequest, mockResponse, mockNext);
+      expect(mockRepo.create).toHaveBeenCalled();
+      expect(mockNext).toHaveBeenCalledWith(new Error('Create Error'));
+    });
+    test('Then, when we call update(), we should have an error', async () => {
+      const mockRequest = {
+        params: { id: 'someUserId' },
+        body: {
+          userName: 'Kubo',
+        },
+      } as unknown as Request;
+      const mockResponse = {
+        json: jest.fn(),
+      } as unknown as Response;
+      const mockNext = jest.fn();
+      await userController.update(mockRequest, mockResponse, mockNext);
+      expect(mockRepo.update).toHaveBeenCalled();
+      expect(mockNext).toHaveBeenCalledWith(new Error('Update Error'));
+    });
+    test('Then, when we call delete(), we should have an error', async () => {
+      const mockRequest = {
+        params: { id: '1' },
+      } as unknown as Request;
+      const mockResponse = {
+        json: jest.fn(),
+      } as unknown as Response;
+      const mockNext = jest.fn();
+      await userController.delete(mockRequest, mockResponse, mockNext);
+      expect(mockRepo.delete).toHaveBeenCalled();
+      expect(mockNext).toHaveBeenCalledWith(new Error('Delete Error'));
+    });
+  });
 });
