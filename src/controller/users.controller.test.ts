@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { UserMongoRepository } from '../repository/user.mongo.repository';
+import { Auth } from '../services/auth';
 import { UserController } from './users.controller';
 
 describe('Given the class UserController', () => {
@@ -99,6 +100,24 @@ describe('Given the class UserController', () => {
       await userController.delete(mockRequest, mockResponse, mockNext);
       expect(mockRepo.delete).toHaveBeenCalled();
     });
+    test('Then, we use the login() method', async () => {
+      const mockedUser = {
+        userName: 'Kubo',
+        password: '1234',
+      };
+      const mockRequest = {
+        params: { id: '1' },
+        body: mockedUser,
+      } as unknown as any;
+      const mockResponse = {
+        json: jest.fn(),
+      } as unknown as Response;
+      const mockNext = jest.fn();
+      (mockRepo.search as jest.Mock).mockResolvedValue([mockedUser]);
+      Auth.compare = jest.fn().mockReturnValue(true);
+      await userController.login(mockRequest, mockResponse, mockNext);
+      expect(mockRepo.search).toHaveBeenCalled();
+    });
   });
   describe('When there are errors calling methods', () => {
     const mockRepo: UserMongoRepository = {
@@ -178,6 +197,20 @@ describe('Given the class UserController', () => {
       await userController.delete(mockRequest, mockResponse, mockNext);
       expect(mockRepo.delete).toHaveBeenCalled();
       expect(mockNext).toHaveBeenCalledWith(new Error('Delete Error'));
+    });
+    test('login error', async () => {
+      const mockedUser = {};
+      const mockRequest = {
+        params: { id: '1' },
+        body: mockedUser,
+      } as unknown as any;
+      const mockResponse = {
+        json: jest.fn(),
+      } as unknown as Response;
+      const mockNext = jest.fn();
+      await userController.login(mockRequest, mockResponse, mockNext);
+      expect(mockRepo.search).toHaveBeenCalled();
+      expect(mockNext).toHaveBeenCalledWith(new Error('Search error'));
     });
   });
 });
