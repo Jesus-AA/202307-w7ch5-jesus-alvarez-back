@@ -4,7 +4,7 @@ import { HttpError } from '../types/http.error.js';
 import { TokenPayLoad } from '../types/token.js';
 
 export class Auth {
-  private static secret = process.env.TOKEN_SECRET!;
+  static secret = process.env.TOKEN_SECRET!;
 
   static hash(password: string): Promise<string> {
     const saltRounds = 10;
