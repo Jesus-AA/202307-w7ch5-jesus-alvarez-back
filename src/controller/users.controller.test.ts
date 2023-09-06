@@ -220,13 +220,38 @@ describe('Given the class UserController', () => {
         params: '1',
         body: { password: '123' },
       } as unknown as Request;
+
+      const mockResponse = {
+        json: jest.fn(),
+      } as unknown as Response;
+
+      const mockNext = jest.fn();
+
+      await userController.login(mockRequest, mockResponse, mockNext);
+      expect(mockRepo.search).toHaveBeenCalled();
+      expect(mockNext).toHaveBeenCalledWith(new Error('Search Error'));
+    });
+  });
+});
+
+describe('Given the class UserController', () => {
+  describe('When theres an error calling the search method during the login', () => {
+    test('Then, there should be an error throwed', async () => {
+      const mockRepo: UserMongoRepository = {
+        search: jest.fn().mockResolvedValueOnce([]),
+      } as unknown as UserMongoRepository;
+      const userController = new UserController(mockRepo);
+      const mockRequest = {
+        params: '1',
+        body: { userName: 'Kubo', password: '123' },
+      } as unknown as Request;
       const mockResponse = {
         json: jest.fn(),
       } as unknown as Response;
       const mockNext = jest.fn();
       await userController.login(mockRequest, mockResponse, mockNext);
-      expect(mockRepo.search).toHaveBeenCalled();
-      expect(mockNext).toHaveBeenCalledWith(new Error('Search Error'));
+      const thrownError = mockNext.mock.calls[0][0];
+      expect(thrownError.message).toBe('Login Unauthorized');
     });
   });
 });

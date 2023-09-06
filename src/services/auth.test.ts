@@ -17,11 +17,10 @@ describe('Given the class Auth', () => {
       const hash = await bcrypt.hash(password, 10);
       expect(Auth.compare(password2, hash)).resolves.toBe(false);
     });
-    test.skip('Then, when verifyJWTGettingPayload is called', () => {
-      const payload = { foo: 'bar' };
-      const token = jwt.sign(payload, Auth.secret);
-      const result = Auth.verifyJWTGettingPayload(token);
-      expect(result).toEqual(expect.objectContaining(payload));
+    test('Then, when verifyJWTGettingPayload is called', () => {
+      jwt.verify = jest.fn();
+      Auth.verifyJWTGettingPayload('mockedToken');
+      expect(jwt.verify).toHaveBeenCalled();
     });
     test('should throw an HttpError for an invalid token', () => {
       const token = 'invalidToken';
@@ -33,6 +32,12 @@ describe('Given the class Auth', () => {
         .spyOn(jwt, 'verify')
         .mockReturnValueOnce('someString' as unknown as void);
       expect(() => Auth.verifyJWTGettingPayload(token)).toThrow(HttpError);
+    });
+    test('Then the signJWT es called should return a token', () => {
+      jwt.sign = jest.fn().mockReturnValue('ff');
+      const payload = { id: '12345', userName: 'kubo' };
+      const token = Auth.signJWT(payload);
+      expect(typeof token).toBe('string');
     });
   });
 });

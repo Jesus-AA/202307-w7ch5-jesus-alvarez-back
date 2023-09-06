@@ -24,25 +24,6 @@ export abstract class Controller<T extends { id: string | number }> {
     }
   }
 
-  async create(req: Request, res: Response, next: NextFunction) {
-    try {
-      const newUser = await this.repo.create(req.body);
-      res.status(201);
-      res.json(newUser);
-    } catch (error) {
-      next(error);
-    }
-  }
-
-  async update(req: Request, res: Response, next: NextFunction) {
-    try {
-      const updatedUser = await this.repo.update(req.params.id, req.body);
-      res.json(updatedUser);
-    } catch (error) {
-      next(error);
-    }
-  }
-
   async delete(req: Request, res: Response, next: NextFunction) {
     try {
       await this.repo.delete(req.params.id);
