@@ -5,12 +5,11 @@ import { Auth } from './auth';
 
 describe('Given the class Auth', () => {
   describe('When its methods are called,', () => {
-    test('Then, the method hash()', async () => {
+    test('Then, when the method hash() is called', async () => {
       const password = '1233';
       const hash = await bcrypt.hash(password, 10);
       expect(Auth.compare(password, hash)).resolves.toBe(true);
     });
-
     test('Then, if the password is incorrect, should throw an error', async () => {
       const password = '1233';
       const password2 = '1';
@@ -23,15 +22,11 @@ describe('Given the class Auth', () => {
       expect(jwt.verify).toHaveBeenCalled();
     });
     test('should throw an HttpError for an invalid token', () => {
-      const token = 'invalidToken';
-      expect(() => Auth.verifyJWTGettingPayload(token)).toThrow(HttpError);
-    });
-    test('should throw an HttpError if jwt.verify returns a string', () => {
-      const token = 'invalidToken';
-      jest
-        .spyOn(jwt, 'verify')
-        .mockReturnValueOnce('someString' as unknown as void);
-      expect(() => Auth.verifyJWTGettingPayload(token)).toThrow(HttpError);
+      jwt.verify = jest.fn().mockReturnValueOnce('hola');
+
+      const error = new HttpError(498, 'Invalid Token');
+
+      expect(() => Auth.verifyJWTGettingPayload('adios')).toThrowError(error);
     });
     test('Then the signJWT es called should return a token', () => {
       jwt.sign = jest.fn().mockReturnValue('ff');

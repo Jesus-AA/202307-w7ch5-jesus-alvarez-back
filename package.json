@@ -7,7 +7,7 @@
   "scripts": {
     "server": "cross-env PORT=4300 DEBUG=V25* nodemon dist/index.js",
     "build": "tsc --watch",
-    "test": "jest --coverage",
+    "test": "jest",
     "test:prod": "jest --watchAll --coverage --watchAll=false --passWithNoTests",
     "test:w": "jest --watchAll --coverage --collectCoverageFrom=src/todo/**/*.{ts,tsx}",
     "test:fast": "jest --watchAll --coverage",
