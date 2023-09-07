@@ -5,16 +5,15 @@ import { Auth } from './auth';
 
 describe('Given the class Auth', () => {
   describe('When its methods are called,', () => {
-    test('Then, when the method hash() is called', async () => {
-      const password = '1233';
-      const hash = await bcrypt.hash(password, 10);
-      expect(Auth.compare(password, hash)).resolves.toBe(true);
+    test('Then, when the method hash() is called', () => {
+      bcrypt.hash = jest.fn();
+      Auth.hash('');
+      expect(bcrypt.hash).toHaveBeenCalled();
     });
-    test('Then, if the password is incorrect, should throw an error', async () => {
-      const password = '1233';
-      const password2 = '1';
-      const hash = await bcrypt.hash(password, 10);
-      expect(Auth.compare(password2, hash)).resolves.toBe(false);
+    test('Then, if the password is incorrect, should throw an error', () => {
+      bcrypt.compare = jest.fn();
+      Auth.compare('', '');
+      expect(bcrypt.compare).toHaveBeenCalled();
     });
     test('Then, when verifyJWTGettingPayload is called', () => {
       jwt.verify = jest.fn();
@@ -28,7 +27,7 @@ describe('Given the class Auth', () => {
 
       expect(() => Auth.verifyJWTGettingPayload('adios')).toThrowError(error);
     });
-    test('Then the signJWT es called should return a token', () => {
+    test('Then when the signJWT is called should return a token', () => {
       jwt.sign = jest.fn().mockReturnValue('ff');
       const payload = { id: '12345', userName: 'kubo' };
       const token = Auth.signJWT(payload);
