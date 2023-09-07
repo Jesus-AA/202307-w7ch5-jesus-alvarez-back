@@ -10,7 +10,7 @@
     "test": "jest",
     "test:prod": "jest --watchAll --coverage --watchAll=false --passWithNoTests",
     "test:w": "jest --watchAll --coverage --collectCoverageFrom=src/todo/**/*.{ts,tsx}",
-    "test:fast": "jest --watchAll --coverage",
+    "test:fast": "jest --coverage",
     "prepare": "husky install"
   },
   "author": "Jesus Alvarez",

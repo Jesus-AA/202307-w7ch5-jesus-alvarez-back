@@ -15,18 +15,16 @@ export class FilesInterceptor {
       destination: './uploads',
       filename(req, file, callback) {
         const fileName = file.originalname;
-
         callback(null, fileName);
       },
     });
-    const upload = multer({ storage }); // Atajo {storage: storage}
+    const upload = multer({ storage });
     const middleware = upload.single(fileName);
     return (req: Request, res: Response, next: NextFunction) => {
       const prevBody = req.body;
-      debug('Hola', prevBody);
+
       middleware(req, res, next);
       req.body = { ...prevBody, ...req.body };
-      debug('Adios', req.body);
     };
   }
 }
